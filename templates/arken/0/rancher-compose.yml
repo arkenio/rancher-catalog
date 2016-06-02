@@ -1,0 +1,34 @@
+.catalog:
+  name: "Arken"
+  version: "0.1"
+  description: |
+    High level app management on top of rancher
+  minimum_rancher_version: "v1.0.0"
+  questions:
+    - variable: "RANCHER_HOST"
+      description: "Rancher API endpoint including project ID"
+      label: "Rancher Host:"
+      required: true
+      default: ""
+      type: "string"
+    - variable: "RANCHER_ACCESSKEY"
+      description: "Rancher API Acess key"
+      label: "Access key:"
+      required: true
+      default: ""
+      type: "string"
+    - variable: "RANCHER_SECRETKEY"
+      description: "Rancher API Secret key"
+      label: "Secret Key:"
+      required: true
+      default: ""
+      type: "password"
+    - variable: "REPLICAS"
+      description: "Number of Etcd nodes. 3, 5, or 7 are good choices"
+      label: "Etcd cluster size:"
+      required: true
+      default: 3
+      type: "int"
+etcd:
+  retain_ip: true
+  scale: 1
