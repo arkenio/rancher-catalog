@@ -1,6 +1,6 @@
 log:
   name: "Datadog/Lykuid"
-  version: "1.0"
+  version: 1.0
   description: "Real-time performance tracking and visualization of your container-based application deployment"
   minimum_rancher_version: v0.46.0
   questions:
