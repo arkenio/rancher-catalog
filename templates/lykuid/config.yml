@@ -1,0 +1,5 @@
+name: Datadog/Lykuid
+description: |
+  Datadog/Lykuid monitoring agent
+version: 1.0
+category: container
