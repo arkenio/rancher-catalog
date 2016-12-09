@@ -5,22 +5,22 @@
     High level app management on top of rancher
   minimum_rancher_version: "v1.0.0"
   questions:
-    - variable: "RANCHER_HOST"
+    - variable: "CATTLE_URL"
       description: "Rancher API endpoint including project ID"
       label: "Rancher Host:"
-      required: true
+      required: false
       default: ""
       type: "string"
-    - variable: "RANCHER_ACCESSKEY"
-      description: "Rancher API Acess key"
+    - variable: "CATTLE_ACCESS_KEY"
+      description: "Rancher API Acess key /set or rely on generated key if configured"
       label: "Access key:"
-      required: true
+      required: false
       default: ""
       type: "string"
-    - variable: "RANCHER_SECRETKEY"
-      description: "Rancher API Secret key"
+    - variable: "CATTLE_SECRET_KEY"
+      description: "Rancher API Secret key /set or rely on generated key if configured"
       label: "Secret Key:"
-      required: true
+      required: false
       default: ""
       type: "password"
     - variable: "REPLICAS"
