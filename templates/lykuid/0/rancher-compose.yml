@@ -9,6 +9,7 @@ log:
       description: |
         Enter your the URL endpoint
       type: "string"
+      required: true
       default: https://api.lykuid.com
     - variable: "api_key"
       label: "DataDog Api Key"
