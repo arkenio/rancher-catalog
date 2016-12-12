@@ -36,7 +36,7 @@ lykuid-agent:
     - /proc/:/host/proc/:ro
     - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
   volumes_from:
-    - datadog-init
+    - lykuid-init
   labels:
     io.rancher.scheduler.global: "${global_service}"
-    io.rancher.sidekicks: 'datadog-init'
+    io.rancher.sidekicks: 'lykuid-init'
