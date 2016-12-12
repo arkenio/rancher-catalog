@@ -1,0 +1,7 @@
+name: Lykuid
+description: |
+  Real-time performance tracking and visualization of your container-based application deployment
+version: 1.0
+category: Monitoring
+maintainer: "Remi Cattiau <rcattiau@nuxeo.com>"
+license: The MIT License
