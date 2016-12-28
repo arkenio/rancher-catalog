@@ -63,6 +63,7 @@ elasticsearch-masters:
         node.name: "$${HOSTNAME}"
         node.data: "true"
         node.master: "true"
+        network.host: "_site_"
 
 lb:
   scale: 1
