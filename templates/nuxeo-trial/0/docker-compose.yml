@@ -1,0 +1,33 @@
+nuxeo-datavolume:
+  labels:
+    io.rancher.container.start_once: 'true'
+    io.rancher.container.hostname_override: container_name
+  image: nuxeo
+  entrypoint: /bin/true
+  volume_driver: ${volumedriver}
+  volumes:
+    - /var/lib/nuxeo/data
+    - /var/log/nuxeo
+
+nuxeo:
+  environment:
+    NUXEO_CLID: ${clid}
+    NUXEO_PACKAGES: ${packages}
+    NUXEO_DATA: /var/lib/nuxeo/data/
+    NUXEO_LOG: /var/nuxeo/log/    
+    NUXEO_URL: ${url}
+  labels:
+    io.rancher.sidekicks: nuxeo-datavolume    
+    io.rancher.container.hostname_override: container_name
+    io.rancher.scheduler.affinity:container_label_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+  image: nuxeo:FT
+  volumes_from:
+  - nuxeo-datavolume
+
+lb:
+  expose:
+  - 80:8080
+  image: rancher/load-balancer-service
+  links:
+  - nuxeo:nuxeo
+

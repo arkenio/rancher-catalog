@@ -1,0 +1,119 @@
+# Copied from default Rancher ES Stack : don't modifiy service names
+elasticsearch-masters:
+  image: rancher/elasticsearch-conf:v0.4.0
+  labels:
+    io.rancher.container.hostname_override: container_name
+    io.rancher.sidekicks: elasticsearch-base-master,elasticsearch-datavolume-masters
+  volume_driver: ${volumedriver}
+elasticsearch-datavolume-masters:
+  labels:
+    elasticsearch.datanode.config.version: '0'
+    io.rancher.container.hostname_override: container_name
+    io.rancher.container.start_once: true
+  entrypoint: /bin/true
+  image: elasticsearch:1.7.3
+  volume_driver: ${volumedriver}
+
+elasticsearch-base-master:
+  labels:
+    elasticsearch.master.config.version: '0'
+    io.rancher.container.hostname_override: container_name
+  image: elasticsearch:1.7.3
+  net: "container:elasticsearch-masters"
+  volumes_from:
+    - elasticsearch-masters
+    - elasticsearch-datavolume-masters
+  entrypoint:
+    - /opt/rancher/bin/run.sh
+
+
+mongo-cluster:
+  restart: always
+  environment:
+    MONGO_SERVICE_NAME: mongo-cluster
+  tty: true
+  entrypoint: /opt/rancher/bin/entrypoint.sh
+  command:
+  - --replSet
+  - "${replset_name}"
+  image: mongo:3.2
+  labels:
+    io.rancher.container.hostname_override: container_name
+    io.rancher.sidekicks: mongo-base, mongo-datavolume
+  volumes_from:
+    - mongo-datavolume
+    - mongo-base
+
+mongo-base:
+  restart: always
+  net: none
+  tty: true
+  labels:    
+    io.rancher.container.hostname_override: container_name
+    io.rancher.container.start_once: true
+  image: rancher/mongodb-conf:v0.1.0
+  stdin_open: true
+  entrypoint: /bin/true
+
+mongo-datavolume:
+  net: none
+  labels:    
+    io.rancher.container.hostname_override: container_name
+    io.rancher.container.start_once: true
+  volumes:
+    - /data/db
+  volume_driver: ${volumedriver}
+  entrypoint: /bin/true
+  image: busybox
+
+
+
+redis:
+  labels:    
+    io.rancher.container.hostname_override: container_name
+  tty: true
+  image: redis:3.0.3
+  stdin_open: true
+  volume_driver: ${volumedriver}
+
+nuxeo-datavolume:
+  labels:
+    io.rancher.container.start_once: 'true'
+    io.rancher.container.hostname_override: container_name
+  image: nuxeo:FT
+  entrypoint: /bin/true
+  volume_driver: ${volumedriver}
+  volumes:
+    - /var/lib/nuxeo/data
+    - /var/log/nuxeo
+
+nuxeo:
+  environment:
+    NUXEO_CLID: ${clid}
+    NUXEO_PACKAGES: ${packages}
+    NUXEO_ES_HOSTS: elasticsearch:9300
+    NUXEO_DATA: /var/lib/nuxeo/data
+    NUXEO_LOG: /var/log/nuxeo
+    NUXEO_REDIS_HOST: redis
+    NUXEO_URL: ${url}
+    NUXEO_TEMPLATES: default,mongodb
+    NUXEO_CUSTOM_PARAM: nuxeo.mongodb.server=mongodb
+  labels:
+    io.rancher.sidekicks: nuxeo-datavolume    
+    io.rancher.container.hostname_override: container_name
+    io.rancher.scheduler.affinity:container_label_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+  image: nuxeo:LTS
+  links:
+  - mongo-cluster:mongodb
+  - redis:redis  
+  - elasticsearch-masters:elasticsearch
+  volumes_from:
+  - nuxeo-datavolume
+
+lb:
+  expose:
+  - 80:8080
+  image: rancher/load-balancer-service
+  links:
+  - nuxeo:nuxeo
+
