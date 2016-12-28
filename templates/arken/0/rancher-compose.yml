@@ -5,24 +5,12 @@
     High level app management on top of rancher
   minimum_rancher_version: "v1.0.0"
   questions:
-    - variable: "CATTLE_URL"
-      description: "Rancher API endpoint including project ID"
-      label: "Rancher Host:"
-      required: false
-      default: ""
+    - variable: "GOGETAPORT"
+      description: "Public port on which Gogeta will listen"
+      label: "Gogeta port:"
+      required: true
+      default: "7777"
       type: "string"
-    - variable: "CATTLE_ACCESS_KEY"
-      description: "Rancher API Acess key /set or rely on generated key if configured"
-      label: "Access key:"
-      required: false
-      default: ""
-      type: "string"
-    - variable: "CATTLE_SECRET_KEY"
-      description: "Rancher API Secret key /set or rely on generated key if configured"
-      label: "Secret Key:"
-      required: false
-      default: ""
-      type: "password"
     - variable: "REPLICAS"
       description: "Number of Etcd nodes. 3, 5, or 7 are good choices"
       label: "Etcd cluster size:"
@@ -31,4 +19,14 @@
       type: "int"
 etcd:
   retain_ip: true
-  scale: 1
+  scale_policy:
+    min: 1
+    max: ${REPLICAS}
+    increment: 1
+  health_check:
+    port: 2378
+    request_line: /health
+    interval: 5000
+    response_timeout: 3000
+    unhealthy_threshold: 2
+    healthy_threshold: 2
