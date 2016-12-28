@@ -4,7 +4,6 @@
   description: |
     Enterprise Content Management 
     Platform for Business Applications
-  uuid: nuxeo-1
   questions:
     - variable: clid
       description: "A valid CLID to be able to download packages from Nuxeo Online Services. in the form part1\npart2"
@@ -12,6 +11,12 @@
       type: "string"
       required: false
       default: ""
+    - variable: "nuxeoimage"
+      type: "string"
+      label: "Nuxeo image"
+      description: |
+        Nuxeo docker image to use (Rancher must have access to repository)
+      default: "nuxeo:LTS"
     - variable: "packages"
       type: "string"
       label: "List of Nuxeo packages"
@@ -36,6 +41,12 @@
       type: "string"
       required: true
       default: "rs0"
+    - variable: cluster_name
+      description: "Unique name to assign to your Elasticsearch cluster."
+      label: "ES Cluster Name"
+      type: "string"
+      required: true
+      default: "elasticsearch"
     
 
 

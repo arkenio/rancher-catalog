@@ -1,11 +1,10 @@
-# Copied from default Rancher ES Stack : don't modifiy service names
 elasticsearch-masters:
   image: rancher/elasticsearch-conf:v0.5.0
   labels:
     io.rancher.container.hostname_override: container_name
     io.rancher.sidekicks: elasticsearch-base-master,elasticsearch-datavolume-masters
-  volume_driver: ${volumedriver}
-
+  volumes_from:
+    - elasticsearch-datavolume-masters
 elasticsearch-datavolume-masters:
   labels:
     elasticsearch.datanode.config.version: '0'
@@ -14,18 +13,16 @@ elasticsearch-datavolume-masters:
   volumes:
     - /usr/share/elasticsearch/data
     - /usr/share/elasticsearch/config
-    - /opt/rancher/bin  
+    - /opt/rancher/bin
   entrypoint: /bin/true
   image: elasticsearch:2.2.1
-  volume_driver: ${volumedriver}
-
 elasticsearch-base-master:
   labels:
     elasticsearch.master.config.version: '0'
     io.rancher.container.hostname_override: container_name
   image: elasticsearch:2.2.1
   net: "container:elasticsearch-masters"
-  volumes_from:    
+  volumes_from:
     - elasticsearch-datavolume-masters
   entrypoint:
     - /opt/rancher/bin/run.sh
@@ -54,7 +51,7 @@ mongo-base:
   labels:    
     io.rancher.container.hostname_override: container_name
     io.rancher.container.start_once: true
-  image: rancher/mongodb-conf:v0.1.0
+  image: nuxeo/mongodb-conf:v0.1.0
   stdin_open: true
   entrypoint: /bin/true
 
@@ -83,7 +80,7 @@ nuxeo-datavolume:
   labels:
     io.rancher.container.start_once: 'true'
     io.rancher.container.hostname_override: container_name
-  image: nuxeo:FT
+  image: ${nuxeoimage}
   entrypoint: /bin/true
   volume_driver: ${volumedriver}
   volumes:
@@ -100,12 +97,13 @@ nuxeo:
     NUXEO_REDIS_HOST: redis
     NUXEO_URL: ${url}
     NUXEO_TEMPLATES: default,mongodb
-    NUXEO_CUSTOM_PARAM: nuxeo.mongodb.server=mongodb
+    NUXEO_ES_CLUSTER_NAME: ${cluster_name}
+    NUXEO_CUSTOM_PARAM: nuxeo.mongodb.server=mongodb:27017
   labels:
     io.rancher.sidekicks: nuxeo-datavolume    
     io.rancher.container.hostname_override: container_name
     io.rancher.scheduler.affinity:container_label_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
-  image: nuxeo:LTS
+  image: ${nuxeoimage}
   links:
   - mongo-cluster:mongodb
   - redis:redis  

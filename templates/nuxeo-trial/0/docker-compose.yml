@@ -2,7 +2,7 @@ nuxeo-datavolume:
   labels:
     io.rancher.container.start_once: 'true'
     io.rancher.container.hostname_override: container_name
-  image: nuxeo
+  image: ${nuxeoimage}
   entrypoint: /bin/true
   volume_driver: ${volumedriver}
   volumes:
@@ -20,7 +20,7 @@ nuxeo:
     io.rancher.sidekicks: nuxeo-datavolume    
     io.rancher.container.hostname_override: container_name
     io.rancher.scheduler.affinity:container_label_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
-  image: nuxeo:FT
+  image: ${nuxeoimage}
   volumes_from:
   - nuxeo-datavolume
 
