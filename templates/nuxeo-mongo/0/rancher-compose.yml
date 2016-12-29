@@ -5,6 +5,18 @@
     Enterprise Content Management 
     Platform for Business Applications
   questions:
+    - variable: traefikalias
+      description: "Subdomain to use (url will be https://{subdomain}.{domain}/"
+      label: "Subdomain"
+      type: "string"
+      required: true
+    - variable: traefikdomain
+      description: "Domain to use (url will be https://{subdomain}.{domain}/"
+      label: "Domain"
+      type: "string"
+      required: true
+      default: "prod.io.nuxeo.com"
+
     - variable: clid
       description: "A valid CLID to be able to download packages from Nuxeo Online Services. in the form part1\npart2"
       label: "CLID"
@@ -23,12 +35,6 @@
       description: |
         List of Nuxeo packages 
       default: "nuxeo-web-ui"
-    - variable: url
-      description: "The URL that this nuxeo instance should serve"
-      label: "Nuxeo URL"
-      type: "string"
-      required: true
-      default: "http://localhost:8080/"    
     - variable: volumedriver
       type: "string"
       label: "Volume driver"
@@ -83,17 +89,3 @@ mongo-cluster:
     mongo:
       yml:
         replset.name: "${replset_name}"
-
-
-lb:
-  scale: 1
-  load_balancer_config:
-    lb_cookie_stickiness_policy:
-      cookie: lbsticky
-    haproxy_config: {}
-  health_check:
-    port: 42
-    interval: 2000
-    unhealthy_threshold: 3
-    healthy_threshold: 2
-    response_timeout: 2000

@@ -95,7 +95,7 @@ nuxeo:
     NUXEO_DATA: /var/lib/nuxeo/data
     NUXEO_LOG: /var/log/nuxeo
     NUXEO_REDIS_HOST: redis
-    NUXEO_URL: ${url}
+    NUXEO_URL: https://${traefikalias}.${traefikdomain}/
     NUXEO_TEMPLATES: default,mongodb
     NUXEO_ES_CLUSTER_NAME: ${cluster_name}
     NUXEO_CUSTOM_PARAM: nuxeo.mongodb.server=mongodb:27017
@@ -103,6 +103,11 @@ nuxeo:
     io.rancher.sidekicks: nuxeo-datavolume    
     io.rancher.container.hostname_override: container_name
     io.rancher.scheduler.affinity:container_label_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+    traefik.enable: true
+    traefik.alias: ${traefikalias}
+    traefik.domain: ${traefikdomain}
+    traefik.acme: true
+    traefik.port: 8080
   image: ${nuxeoimage}
   links:
   - mongo-cluster:mongodb
@@ -110,11 +115,3 @@ nuxeo:
   - elasticsearch-masters:elasticsearch
   volumes_from:
   - nuxeo-datavolume
-
-lb:
-  expose:
-  - 80:8080
-  image: rancher/load-balancer-service
-  links:
-  - nuxeo:nuxeo
-
