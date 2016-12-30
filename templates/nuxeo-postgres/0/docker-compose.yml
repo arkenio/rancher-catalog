@@ -89,7 +89,7 @@ nuxeo:
     traefik.enable: true
     traefik.alias: ${traefikalias}
     traefik.domain: ${traefikdomain}
-    traefik.acme: true
+    traefik.acme: ${traefikacme}
     traefik.port: 8080
 
   image: ${nuxeoimage}
