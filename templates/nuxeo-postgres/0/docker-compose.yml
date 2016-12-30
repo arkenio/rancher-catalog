@@ -6,7 +6,7 @@ postgres-datavolume:
   entrypoint: chown -R postgres:postgres /var/lib/postgresql/data
   volume_driver: ${volumedriver}
   volumes:
-    - /var/lib/postgresql/data
+    - "${tenantid}-pgdata:/var/lib/postgresql/data"
 
 postgres:
   image: nuxeo/postgres
@@ -32,9 +32,9 @@ elasticsearch-datavolume-masters:
     io.rancher.container.hostname_override: container_name
     io.rancher.container.start_once: true
   volumes:
-    - /usr/share/elasticsearch/data
-    - /usr/share/elasticsearch/config
-    - /opt/rancher/bin
+    - "${tenantid}-esdata:/usr/share/elasticsearch/data"
+    - "${tenantid}-esconfig:/usr/share/elasticsearch/config"
+    - "${tenantid}-esconfigbin:/opt/rancher/bin"
   entrypoint: /bin/true
   image: elasticsearch:2.2.1
 elasticsearch-base-master:
@@ -56,6 +56,8 @@ redis:
   image: redis:3.0.3
   stdin_open: true
   volume_driver: ${volumedriver}
+  volumes:
+    - "${tenantid}-redisdata:/data"
 
 nuxeo-datavolume:
   labels:
@@ -65,8 +67,8 @@ nuxeo-datavolume:
   entrypoint: /bin/true
   volume_driver: ${volumedriver}
   volumes:
-    - /var/lib/nuxeo/data
-    - /var/log/nuxeo
+    - "${tenantid}-nxdata:/var/lib/nuxeo/data"
+    - "${tenantid}-nxlog:/var/log/nuxeo"
 
 nuxeo:
   environment:
@@ -75,6 +77,7 @@ nuxeo:
     NUXEO_DB_HOST: postgres
     NUXEO_DB_TYPE: postgresql
     NUXEO_ES_HOSTS: elasticsearch:9300
+    NUXEO_ES_REPLICAS: 0
     NUXEO_DATA: /var/lib/nuxeo/data
     NUXEO_LOG: /var/log/nuxeo
     NUXEO_REDIS_HOST: redis
