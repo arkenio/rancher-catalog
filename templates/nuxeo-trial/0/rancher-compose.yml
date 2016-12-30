@@ -70,3 +70,15 @@ nuxeo:
     healthy_threshold: 2
     # Response timeout is measured in milliseconds
     response_timeout: 2000
+
+
+elasticsearch-masters:
+  scale: 1
+  metadata:
+    elasticsearch:
+      yml:
+        cluster.name: "${cluster_name}"
+        node.name: "$${HOSTNAME}"
+        node.data: "true"
+        node.master: "true"
+        network.host: "_site_"

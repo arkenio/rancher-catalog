@@ -1,3 +1,33 @@
+elasticsearch-masters:
+  image: rancher/elasticsearch-conf:v0.5.0
+  labels:
+    io.rancher.container.hostname_override: container_name
+    io.rancher.sidekicks: elasticsearch-base-master,elasticsearch-datavolume-masters
+  volumes_from:
+    - elasticsearch-datavolume-masters
+elasticsearch-datavolume-masters:
+  labels:
+    elasticsearch.datanode.config.version: '0'
+    io.rancher.container.hostname_override: container_name
+    io.rancher.container.start_once: true
+  volume_driver: ${volumedriver}
+  volumes:
+    - "${tenantid}-esdata:/usr/share/elasticsearch/data"
+    - "${tenantid}-esconfig:/usr/share/elasticsearch/config"
+    - "${tenantid}-esconfigbin:/opt/rancher/bin"
+  entrypoint: /bin/true
+  image: elasticsearch:2.4.1
+elasticsearch-base-master:
+  labels:
+    elasticsearch.master.config.version: '0'
+    io.rancher.container.hostname_override: container_name
+  image: elasticsearch:2.4.1
+  net: "container:elasticsearch-masters"
+  volumes_from:
+    - elasticsearch-datavolume-masters
+  entrypoint:
+    - /opt/rancher/bin/run.sh
+
 nuxeo-datavolume:
   labels:
     io.rancher.container.start_once: 'true'
@@ -16,6 +46,8 @@ nuxeo:
     NUXEO_DATA: /var/lib/nuxeo/data/
     NUXEO_LOG: /var/nuxeo/log/    
     NUXEO_URL: https://${traefikalias}.${traefikdomain}/
+    NUXEO_ES_HOSTS: elasticsearch:9300
+    NUXEO_ES_REPLICAS: 0
   labels:
     io.rancher.sidekicks: nuxeo-datavolume    
     io.rancher.container.hostname_override: container_name
@@ -28,3 +60,5 @@ nuxeo:
   image: ${nuxeoimage}
   volumes_from:
   - nuxeo-datavolume
+  links:
+  - elasticsearch-masters:elasticsearch
