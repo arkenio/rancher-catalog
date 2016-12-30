@@ -35,7 +35,7 @@
       label: "List of Nuxeo packages"
       description: |
         List of Nuxeo packages 
-      default: nuxeo-web-mobile nuxeo-drive nuxeo-diff nuxeo-spreadsheet nuxeo-dam nuxeo-template-rendering nuxeo-template-rendering-samples nuxeo-showcase-content
+      default: nuxeo-jsf-ui nuxeo-web-ui
     - variable: volumedriver
       type: "string"
       label: "Volume driver"

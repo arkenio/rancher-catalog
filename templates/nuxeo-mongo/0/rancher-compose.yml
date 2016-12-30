@@ -34,7 +34,7 @@
       label: "List of Nuxeo packages"
       description: |
         List of Nuxeo packages 
-      default: "nuxeo-web-ui"
+      default: "nuxeo-jsf-ui nuxeo-web-ui"
     - variable: volumedriver
       type: "string"
       label: "Volume driver"
@@ -57,7 +57,7 @@
 
 
 nuxeo:
-  scale: 2
+  scale: 1
   health_check:
     port: 8080
     # Interval is measured in milliseconds
@@ -83,7 +83,7 @@ elasticsearch-masters:
         network.host: "_site_"
 
 mongo-cluster:
-  scale: 3
+  scale: 1
   retain_ip: true
   metadata:
     mongo:
