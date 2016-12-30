@@ -6,9 +6,8 @@ nuxeo-datavolume:
   entrypoint: /bin/true
   volume_driver: ${volumedriver}
   volumes:
-    - 
-    - /var/lib/nuxeo/data
-    - /var/log/nuxeo
+    - "${tenantid}-nxdata:/var/lib/nuxeo/data"
+    - "${tenantid}-nxlog:/var/log/nuxeo"
 
 nuxeo:
   environment:

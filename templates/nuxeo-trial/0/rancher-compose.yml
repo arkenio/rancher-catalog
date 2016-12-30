@@ -5,6 +5,11 @@
     Enterprise Content Management 
     Platform for Business Applications
   questions:
+    - variable: tenantid
+      description: "This identifies the volume prefix to use"
+      label: "Tenant ID"
+      type: "string"
+      required: true
     - variable: traefikalias
       description: "Subdomain to use (url will be https://{subdomain}.{domain}/"
       label: "Subdomain"
@@ -48,7 +53,7 @@
       label: "Volume driver"
       description: |
         Specifiy docker volume driver to use
-      default: local
+      default: rancher-nfs
 
 
 nuxeo:
