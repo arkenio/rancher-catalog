@@ -6,6 +6,7 @@ nuxeo-datavolume:
   entrypoint: /bin/true
   volume_driver: ${volumedriver}
   volumes:
+    - 
     - /var/lib/nuxeo/data
     - /var/log/nuxeo
 
@@ -23,7 +24,7 @@ nuxeo:
     traefik.enable: true
     traefik.alias: ${traefikalias}
     traefik.domain: ${traefikdomain}
-    traefik.acme: true
+    traefik.acme: ${traefikacme}
     traefik.port: 8080
   image: ${nuxeoimage}
   volumes_from:

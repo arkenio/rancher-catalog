@@ -18,6 +18,13 @@
       required: true
       default: "prod.io.nuxeo.com"
 
+    - variable: traefikacme
+      description: "Issue an SSL certificate (Warning to Let's encrypt rate limit)"
+      label: "Ask for SSL"
+      type: "boolean"
+      required: true
+      default: "false"
+
     - variable: clid
       description: "A valid CLID to be able to download packages from Nuxeo Online Services. in the form part1\npart2"
       label: "CLID"
