@@ -10,17 +10,18 @@ elasticsearch-datavolume-masters:
     elasticsearch.datanode.config.version: '0'
     io.rancher.container.hostname_override: container_name
     io.rancher.container.start_once: true
+  volume_driver: ${volumedriver}
   volumes:
-    - /usr/share/elasticsearch/data
-    - /usr/share/elasticsearch/config
-    - /opt/rancher/bin
+    - "${tenantid}-esdata:/usr/share/elasticsearch/data"
+    - "${tenantid}-esconfig:/usr/share/elasticsearch/config"
+    - "${tenantid}-esconfigbin:/opt/rancher/bin"
   entrypoint: /bin/true
-  image: elasticsearch:2.2.1
+  image: elasticsearch:2.4.1
 elasticsearch-base-master:
   labels:
     elasticsearch.master.config.version: '0'
     io.rancher.container.hostname_override: container_name
-  image: elasticsearch:2.2.1
+  image: elasticsearch:2.4.1
   net: "container:elasticsearch-masters"
   volumes_from:
     - elasticsearch-datavolume-masters
@@ -32,37 +33,21 @@ mongo-cluster:
   environment:
     MONGO_SERVICE_NAME: mongo-cluster
   tty: true
-  entrypoint: /opt/rancher/bin/entrypoint.sh
-  command:
-  - --replSet
-  - "${replset_name}"
   image: mongo:3.2
   labels:
     io.rancher.container.hostname_override: container_name
-    io.rancher.sidekicks: mongo-base, mongo-datavolume
+    io.rancher.sidekicks: mongo-datavolume
   volumes_from:
     - mongo-datavolume
-    - mongo-base
-
-mongo-base:
-  restart: always
-  net: none
-  tty: true
-  labels:    
-    io.rancher.container.hostname_override: container_name
-    io.rancher.container.start_once: true
-  image: nuxeo/mongodb-conf:v0.1.0
-  stdin_open: true
-  entrypoint: /bin/true
 
 mongo-datavolume:
   net: none
   labels:    
     io.rancher.container.hostname_override: container_name
     io.rancher.container.start_once: true
-  volumes:
-    - /data/db
   volume_driver: ${volumedriver}
+  volumes:
+    - "${tenantid}-mongodata:/data/db"
   entrypoint: /bin/true
   image: busybox
 
@@ -75,6 +60,8 @@ redis:
   image: redis:3.0.3
   stdin_open: true
   volume_driver: ${volumedriver}
+  volumes:
+    - "${tenantid}-redisdata:/data"
 
 nuxeo-datavolume:
   labels:
@@ -84,8 +71,8 @@ nuxeo-datavolume:
   entrypoint: /bin/true
   volume_driver: ${volumedriver}
   volumes:
-    - /var/lib/nuxeo/data
-    - /var/log/nuxeo
+    - "${tenantid}-nxdata:/var/lib/nuxeo/data"
+    - "${tenantid}-nxlog:/var/log/nuxeo"
 
 nuxeo:
   environment:
@@ -98,6 +85,7 @@ nuxeo:
     NUXEO_URL: https://${traefikalias}.${traefikdomain}/
     NUXEO_TEMPLATES: default,mongodb
     NUXEO_ES_CLUSTER_NAME: ${cluster_name}
+    NUXEO_ES_REPLICAS: 0
     NUXEO_CUSTOM_PARAM: nuxeo.mongodb.server=mongodb:27017
   labels:
     io.rancher.sidekicks: nuxeo-datavolume    
