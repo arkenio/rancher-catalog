@@ -31,6 +31,7 @@ elasticsearch-datavolume-masters:
     elasticsearch.datanode.config.version: '0'
     io.rancher.container.hostname_override: container_name
     io.rancher.container.start_once: true
+  volume_driver: ${volumedriver}
   volumes:
     - "${tenantid}-esdata:/usr/share/elasticsearch/data"
     - "${tenantid}-esconfig:/usr/share/elasticsearch/config"

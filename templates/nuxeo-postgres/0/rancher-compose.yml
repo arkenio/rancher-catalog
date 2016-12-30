@@ -50,7 +50,7 @@
       label: "Volume driver"
       description: |
         Specifiy docker volume driver to use
-      default: local
+      default: rancher-nfs
     
 
 
