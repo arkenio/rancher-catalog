@@ -17,6 +17,7 @@ elasticsearch-datavolume-masters:
     - "${tenantid}-esconfigbin:/opt/rancher/bin"
   entrypoint: /bin/true
   image: elasticsearch:2.4.1
+
 elasticsearch-base-master:
   labels:
     elasticsearch.master.config.version: '0'

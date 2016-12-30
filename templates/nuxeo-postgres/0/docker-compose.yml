@@ -37,12 +37,12 @@ elasticsearch-datavolume-masters:
     - "${tenantid}-esconfig:/usr/share/elasticsearch/config"
     - "${tenantid}-esconfigbin:/opt/rancher/bin"
   entrypoint: /bin/true
-  image: elasticsearch:2.2.1
+  image: elasticsearch:2.4.1
 elasticsearch-base-master:
   labels:
     elasticsearch.master.config.version: '0'
     io.rancher.container.hostname_override: container_name
-  image: elasticsearch:2.2.1
+  image: elasticsearch:2.4.1
   net: "container:elasticsearch-masters"
   volumes_from:
     - elasticsearch-datavolume-masters
