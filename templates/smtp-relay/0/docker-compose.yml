@@ -1,0 +1,10 @@
+postfix:
+  image: juanluisbaptiste/postfix
+  environment:
+    SMTP_SERVER: ${smtpserver}
+    SMTP_USERNAME: ${smtpusername}
+    SMTP_PASSWORD: ${smtppassword}
+    SERVER_HOSTNAME: ${serverhostname}
+  labels:
+    io.rancher.container.hostname_override: container_name
+

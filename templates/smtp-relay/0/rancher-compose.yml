@@ -1,0 +1,28 @@
+.catalog:
+  name: "Nuxeo Platform"
+  version: "1.0"
+  description: |
+    Enterprise Content Management 
+    Platform for Business Applications
+  questions:
+    - variable: smtpserver
+      description: "Server address of the SMTP server to use."
+      label: "SMTP server"
+      type: "string"
+      required: true
+    - variable: smtpusername
+      description: "Username to authenticate with."
+      label: "SMTP username"
+      type: "string"
+      required: true
+    - variable: smtppassword
+      description: "Password of the SMTP user."
+      label: "SMTP password"
+      type: "string"
+      required: true
+    - variable: serverhostname
+      description: "Server hostname for the Postfix container. Emails will appear to come from the hostname's domain."
+      label: "Server name"
+      type: "string"
+      required: true
+    

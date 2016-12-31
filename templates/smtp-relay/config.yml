@@ -1,0 +1,5 @@
+name: SMTP Relay
+description: |
+  Exposes an open SMTP that relays to a TLS SMTP server.
+version: 1.0
+category: Mail
