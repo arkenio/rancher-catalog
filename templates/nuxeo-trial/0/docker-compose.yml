@@ -44,7 +44,7 @@ nuxeo:
     NUXEO_CLID: ${clid}
     NUXEO_PACKAGES: ${packages}
     NUXEO_DATA: /var/lib/nuxeo/data/
-    NUXEO_LOG: /var/nuxeo/log/    
+    NUXEO_LOG: /var/log/nuxeo/    
     NUXEO_URL: https://${traefikalias}.${traefikdomain}/
     NUXEO_ES_HOSTS: elasticsearch:9300
     NUXEO_ES_REPLICAS: 0
