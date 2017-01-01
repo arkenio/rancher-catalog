@@ -1,102 +1,107 @@
-postgres-datavolume:
-  labels:
-    io.rancher.container.start_once: 'true'
-    io.rancher.container.hostname_override: container_name
-  image: nuxeo/postgres
-  entrypoint: chown -R postgres:postgres /var/lib/postgresql/data
-  volume_driver: ${volumedriver}
-  volumes:
-    - "${tenantid}-pgdata:/var/lib/postgresql/data"
+version: '2'
+services:
+  postgres-datavolume:
+    labels:
+      io.rancher.container.start_once: 'true'
+      io.rancher.container.hostname_override: container_name
+    image: nuxeo/postgres
+    entrypoint: chown -R postgres:postgres /var/lib/postgresql/data    
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 
-postgres:
-  image: nuxeo/postgres
-  environment:
-    - POSTGRES_USER=nuxeo
-    - POSTGRES_PASSWORD=nuxeo    
-  labels:
-    io.rancher.sidekicks: postgres-datavolume
-    io.rancher.container.hostname_override: container_name
-  volumes_from:
-  - postgres-datavolume
+  postgres:
+    image: nuxeo/postgres
+    environment:
+      - POSTGRES_USER=nuxeo
+      - POSTGRES_PASSWORD=nuxeo    
+    labels:
+      io.rancher.sidekicks: postgres-datavolume
+      io.rancher.container.hostname_override: container_name
+    volumes_from:
+    - postgres-datavolume
 
-elasticsearch-masters:
-  image: rancher/elasticsearch-conf:v0.5.0
-  labels:
-    io.rancher.container.hostname_override: container_name
-    io.rancher.sidekicks: elasticsearch-base-master,elasticsearch-datavolume-masters
-  volumes_from:
-    - elasticsearch-datavolume-masters
-elasticsearch-datavolume-masters:
-  labels:
-    elasticsearch.datanode.config.version: '0'
-    io.rancher.container.hostname_override: container_name
-    io.rancher.container.start_once: true
-  volume_driver: ${volumedriver}
-  volumes:
-    - "${tenantid}-esdata:/usr/share/elasticsearch/data"
-    - "${tenantid}-esconfig:/usr/share/elasticsearch/config"
-    - "${tenantid}-esconfigbin:/opt/rancher/bin"
-  entrypoint: /bin/true
-  image: elasticsearch:2.4.1
-elasticsearch-base-master:
-  labels:
-    elasticsearch.master.config.version: '0'
-    io.rancher.container.hostname_override: container_name
-  image: elasticsearch:2.4.1
-  net: "container:elasticsearch-masters"
-  volumes_from:
-    - elasticsearch-datavolume-masters
-  entrypoint:
-    - /opt/rancher/bin/run.sh
+  elasticsearch-masters:
+    image: rancher/elasticsearch-conf:v0.5.0
+    labels:
+      io.rancher.container.hostname_override: container_name
+      io.rancher.sidekicks: elasticsearch-base-master,elasticsearch-datavolume-masters
+    volumes_from:
+      - elasticsearch-datavolume-masters
+  elasticsearch-datavolume-masters:
+    labels:
+      elasticsearch.datanode.config.version: '0'
+      io.rancher.container.hostname_override: container_name
+      io.rancher.container.start_once: true    
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+      - esconfig:/usr/share/elasticsearch/config
+      - esconfigbin:/opt/rancher/bin
+    entrypoint: /bin/true
+    image: elasticsearch:2.4.1
+  elasticsearch-base-master:
+    labels:
+      elasticsearch.master.config.version: '0'
+      io.rancher.container.hostname_override: container_name
+    image: elasticsearch:2.4.1
+    volumes_from:
+      - elasticsearch-datavolume-masters
+    entrypoint:
+      - /opt/rancher/bin/run.sh
+  
+  nuxeo-datavolume:
+    labels:
+      io.rancher.container.start_once: 'true'
+      io.rancher.container.hostname_override: container_name
+    image: ${nuxeoimage}
+    entrypoint: /bin/true    
+    volumes:
+      - nxdata:/var/lib/nuxeo/data
+      - nxlog:/var/log/nuxeo
+
+  nuxeo:
+    environment:
+      NUXEO_CLID: ${clid}
+      NUXEO_PACKAGES: ${packages}
+      NUXEO_DB_HOST: postgres
+      NUXEO_DB_TYPE: postgresql
+      NUXEO_ES_HOSTS: elasticsearch:9300
+      NUXEO_ES_REPLICAS: 0
+      NUXEO_DATA: /var/lib/nuxeo/data
+      NUXEO_LOG: /var/log/nuxeo
+      NUXEO_URL: https://${traefikalias}.${traefikdomain}/
+    labels:
+      io.rancher.sidekicks: nuxeo-datavolume    
+      io.rancher.container.hostname_override: container_name
+      io.rancher.scheduler.affinity:container_label_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+      traefik.enable: true
+      traefik.alias: ${traefikalias}
+      traefik.domain: ${traefikdomain}
+      traefik.acme: ${traefikacme}
+      traefik.port: 8080
+
+    image: ${nuxeoimage}
+    links:
+    - postgres:postgres
+    - elasticsearch-masters:elasticsearch
+    volumes_from:
+    - nuxeo-datavolume
 
 
-redis:
-  labels:    
-    io.rancher.container.hostname_override: container_name
-  tty: true
-  image: redis:3.0.3
-  stdin_open: true
-  volume_driver: ${volumedriver}
-  volumes:
-    - "${tenantid}-redisdata:/data"
+volumes:
+  pgdata:
+    driver: ${volumedriver}
+  esdata:
+    driver: ${volumedriver}
+  esconfig:
+    driver: local
+  esconfigbin:
+    driver: local
+  nxdata:
+    driver: ${volumedriver}
+  nxlog:
+    driver: local
+    per_container: true
 
-nuxeo-datavolume:
-  labels:
-    io.rancher.container.start_once: 'true'
-    io.rancher.container.hostname_override: container_name
-  image: ${nuxeoimage}
-  entrypoint: /bin/true
-  volume_driver: ${volumedriver}
-  volumes:
-    - "${tenantid}-nxdata:/var/lib/nuxeo/data"
-    - "${tenantid}-nxlog:/var/log/nuxeo"
-
-nuxeo:
-  environment:
-    NUXEO_CLID: ${clid}
-    NUXEO_PACKAGES: ${packages}
-    NUXEO_DB_HOST: postgres
-    NUXEO_DB_TYPE: postgresql
-    NUXEO_ES_HOSTS: elasticsearch:9300
-    NUXEO_ES_REPLICAS: 0
-    NUXEO_DATA: /var/lib/nuxeo/data
-    NUXEO_LOG: /var/log/nuxeo
-    NUXEO_REDIS_HOST: redis
-    NUXEO_URL: https://${traefikalias}.${traefikdomain}/
-  labels:
-    io.rancher.sidekicks: nuxeo-datavolume    
-    io.rancher.container.hostname_override: container_name
-    io.rancher.scheduler.affinity:container_label_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
-    traefik.enable: true
-    traefik.alias: ${traefikalias}
-    traefik.domain: ${traefikdomain}
-    traefik.acme: ${traefikacme}
-    traefik.port: 8080
-
-  image: ${nuxeoimage}
-  links:
-  - postgres:postgres
-  - redis:redis  
-  - elasticsearch-masters:elasticsearch
-  volumes_from:
-  - nuxeo-datavolume
+networks:
+  elasticsearch-base-master: 
+    network_mode: "service:elasticsearch-masters"
