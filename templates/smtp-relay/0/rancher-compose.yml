@@ -10,6 +10,7 @@
       label: "SMTP server"
       type: "string"
       required: true
+      default: email-smtp.us-east-1.amazonaws.com
     - variable: smtpusername
       description: "Username to authenticate with."
       label: "SMTP username"
@@ -25,4 +26,5 @@
       label: "Server name"
       type: "string"
       required: true
+      default: smtp.internal
     
