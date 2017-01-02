@@ -46,6 +46,24 @@
       description: |
         Specifiy docker volume driver to use
       default: rancher-nfs
+    - variable: "smtprelay"
+      description: "Link to an unsigned stmp relay"
+      label: "SMTP Relay"
+      type: "service"
+      required: false
+      default: "smtp-relay/postfix"
+    - variable: mailfrom
+      type: "string"
+      label: "Mail from"
+      description: |
+        Address that appears in the FROM field. Should be an address verified for the SMTP relay
+      default: "noreply@nuxeo.io"
+    - variable: cluster_name
+      description: "Unique name to assign to your Elasticsearch cluster."
+      label: "ES Cluster Name"
+      type: "string"
+      required: true
+      default: "elasticsearch"
     
 
 

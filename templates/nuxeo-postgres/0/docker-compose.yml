@@ -71,6 +71,9 @@ services:
       NUXEO_DATA: /var/lib/nuxeo/data
       NUXEO_LOG: /var/log/nuxeo
       NUXEO_URL: https://${traefikalias}.${traefikdomain}/
+      NUXEO_CUSTOM_PARAM: | 
+        mail.transport.host=smtp
+        mail.from=${mailfrom}
     labels:
       io.rancher.sidekicks: nuxeo-datavolume    
       io.rancher.container.hostname_override: container_name
@@ -85,6 +88,8 @@ services:
     links:
     - postgres:postgres
     - elasticsearch-masters:elasticsearch
+    external_links:
+    - ${smtprelay}:smtp
     volumes_from:
     - nuxeo-datavolume
 

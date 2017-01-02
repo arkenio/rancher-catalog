@@ -75,7 +75,10 @@ services:
       NUXEO_TEMPLATES: default,mongodb
       NUXEO_ES_CLUSTER_NAME: ${cluster_name}
       NUXEO_ES_REPLICAS: 0
-      NUXEO_CUSTOM_PARAM: nuxeo.mongodb.server=mongodb:27017
+      NUXEO_CUSTOM_PARAM: |
+        nuxeo.mongodb.server=mongodb:27017
+        mail.transport.host=smtp
+        mail.from=${mailfrom}
     labels:
       io.rancher.sidekicks: nuxeo-datavolume    
       io.rancher.container.hostname_override: container_name
@@ -89,6 +92,8 @@ services:
     links:
     - mongo-cluster:mongodb
     - elasticsearch-masters:elasticsearch
+    external_links:
+    - ${smtprelay}:smtp
     volumes_from:
     - nuxeo-datavolume
 
