@@ -26,6 +26,7 @@ services:
     image: elasticsearch:2.4.1
     volumes_from:
       - elasticsearch-datavolume-masters
+    network_mode: container:elasticsearch-masters
     entrypoint:
       - /opt/rancher/bin/run.sh
 
@@ -47,6 +48,7 @@ services:
       io.rancher.container.start_once: true
     volumes:
       - mongodata:/data/db
+    network_mode: none
     entrypoint: /bin/true
     image: busybox
 
@@ -104,9 +106,3 @@ volumes:
   nxlog:
     driver: local
     per_container: true
-
-networks:
-  elasticsearch-base-master: 
-    network_mode: "service:elasticsearch-masters"
-  mongo-datavolume:
-    network_mode: none
