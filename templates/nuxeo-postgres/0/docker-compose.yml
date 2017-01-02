@@ -26,7 +26,7 @@ services:
       io.rancher.container.hostname_override: container_name
       io.rancher.sidekicks: elasticsearch-base-master,elasticsearch-datavolume-masters
     volumes_from:
-      - elasticsearch-datavolume-masters
+      - elasticsearch-datavolume-masters    
   elasticsearch-datavolume-masters:
     labels:
       elasticsearch.datanode.config.version: '0'
@@ -38,11 +38,13 @@ services:
       - esconfigbin:/opt/rancher/bin
     entrypoint: /bin/true
     image: elasticsearch:2.4.1
+    
   elasticsearch-base-master:
     labels:
       elasticsearch.master.config.version: '0'
       io.rancher.container.hostname_override: container_name
     image: elasticsearch:2.4.1
+    network_mode: container:elasticsearch-masters
     volumes_from:
       - elasticsearch-datavolume-masters
     entrypoint:
@@ -102,6 +104,3 @@ volumes:
     driver: local
     per_container: true
 
-networks:
-  elasticsearch-base-master: 
-    network_mode: "service:elasticsearch-masters"
