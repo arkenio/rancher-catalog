@@ -43,6 +43,12 @@
       description: |
         List of Nuxeo packages 
       default: nuxeo-jsf-ui nuxeo-web-ui
+    - variable: "customconf"
+      type: "multiline"
+      label: "Custom params"
+      description: |
+        Additional nuxeo.conf params
+      default: ""
     - variable: volumedriver
       type: "string"
       label: "Volume driver"

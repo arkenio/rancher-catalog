@@ -51,6 +51,7 @@ services:
       NUXEO_CUSTOM_PARAM: |
         mail.transport.host=smtp
         mail.from=${mailfrom}
+        ${customconf}
     labels:
       io.rancher.sidekicks: nuxeo-datavolume    
       io.rancher.container.hostname_override: container_name

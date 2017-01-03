@@ -79,6 +79,7 @@ services:
         nuxeo.mongodb.server=mongodb:27017
         mail.transport.host=smtp
         mail.from=${mailfrom}
+        ${customconf}
     labels:
       io.rancher.sidekicks: nuxeo-datavolume    
       io.rancher.container.hostname_override: container_name
