@@ -67,6 +67,8 @@ services:
       NUXEO_DB_HOST: postgres
       NUXEO_DB_TYPE: postgresql
       NUXEO_ES_HOSTS: elasticsearch:9300
+      NUXEO_ES_CLUSTERNAME: elasticsearch
+      NUXEO_ES_INDEX_NAME: nuxeo
       NUXEO_ES_REPLICAS: 0
       NUXEO_DATA: /var/lib/nuxeo/data
       NUXEO_LOG: /var/log/nuxeo

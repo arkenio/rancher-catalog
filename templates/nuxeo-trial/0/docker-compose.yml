@@ -47,6 +47,8 @@ services:
       NUXEO_LOG: /var/log/nuxeo/    
       NUXEO_URL: https://${traefikalias}.${traefikdomain}/
       NUXEO_ES_HOSTS: elasticsearch:9300
+      NUXEO_ES_CLUSTERNAME: elasticsearch
+      NUXEO_ES_INDEX_NAME: nuxeo
       NUXEO_ES_REPLICAS: 0
       NUXEO_CUSTOM_PARAM: |
         mail.transport.host=smtp

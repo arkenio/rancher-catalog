@@ -74,6 +74,8 @@ services:
       NUXEO_URL: https://${traefikalias}.${traefikdomain}/
       NUXEO_TEMPLATES: default,mongodb
       NUXEO_ES_CLUSTER_NAME: ${cluster_name}
+      NUXEO_ES_CLUSTERNAME: ${cluster_name}
+      NUXEO_ES_INDEX_NAME: nuxeo
       NUXEO_ES_REPLICAS: 0
       NUXEO_CUSTOM_PARAM: |
         nuxeo.mongodb.server=mongodb:27017
